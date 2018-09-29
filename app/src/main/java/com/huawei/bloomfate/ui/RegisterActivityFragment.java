@@ -11,6 +11,7 @@ import com.huawei.bloomfate.R;
 /**
  * A placeholder fragment containing a simple view.
  */
+
 public class RegisterActivityFragment extends Fragment {
 
     public RegisterActivityFragment() {
@@ -21,4 +22,5 @@ public class RegisterActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_register, container, false);
     }
+
 }
