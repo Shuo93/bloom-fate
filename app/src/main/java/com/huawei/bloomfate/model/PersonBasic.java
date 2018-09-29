@@ -8,6 +8,8 @@ public class PersonBasic {
 
     private String sex;
 
+    private String city;
+
     private String photo;
 
     public String getPhoto() {
@@ -41,4 +43,8 @@ public class PersonBasic {
     public void setSex(String sex) {
         this.sex = sex;
     }
+
+    public String getCity() { return city; }
+
+    public void setCity(String city) { this.city = city; }
 }
