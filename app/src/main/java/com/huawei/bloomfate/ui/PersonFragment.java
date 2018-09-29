@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,6 @@ import android.view.ViewGroup;
 import com.huawei.bloomfate.R;
 import com.huawei.bloomfate.ui.dummy.DummyContent;
 import com.huawei.bloomfate.ui.dummy.DummyContent.DummyItem;
-
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -24,10 +23,17 @@ import java.util.List;
  */
 public class PersonFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+    private static final String TAG = "PersonFragment";
+
+    enum Type {
+        ALL,
+        LIKE
+    }
+
+    private static final String ARG_TYPE = "browse-type";
+
+    private Type type;
+
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -37,12 +43,10 @@ public class PersonFragment extends Fragment {
     public PersonFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static PersonFragment newInstance(int columnCount) {
+    public static PersonFragment newInstance(Type type) {
         PersonFragment fragment = new PersonFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putString(ARG_TYPE, type.name());
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,39 +56,38 @@ public class PersonFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            type = Type.valueOf(getArguments().getString(ARG_TYPE));
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_person_list, container, false);
+        View root = inflater.inflate(R.layout.fragment_person_list, container, false);
 
         // Set the adapter
+        View view = root.findViewById(R.id.person_list);
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
             recyclerView.setAdapter(new MyPersonRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
-        return view;
+
+        Log.v(TAG, type.name());
+        return root;
     }
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
+//        if (context instanceof OnListFragmentInteractionListener) {
+//            mListener = (OnListFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnListFragmentInteractionListener");
+//        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.huawei.bloomfate.R;
 import com.huawei.bloomfate.ui.DateFragment.OnListFragmentInteractionListener;
 import com.huawei.bloomfate.ui.dummy.DummyContent.DummyItem;
 
