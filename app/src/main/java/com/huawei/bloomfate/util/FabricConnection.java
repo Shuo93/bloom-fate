@@ -11,11 +11,11 @@ public class FabricConnection {
         private static final FabricConnection INSTANCE = new FabricConnection();
     }
 
-    public String invoke() {
+    public String invoke(String func, String args) {
         return "";
     }
 
-    public String query() {
+    public String query(String func, String args) {
         return "";
     }
 }

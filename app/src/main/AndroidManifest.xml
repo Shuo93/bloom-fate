@@ -14,15 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-        </activity>
+        <activity android:name=".MainActivity"></activity>
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
             android:name=".ui.SquareActivity"
             android:label="@string/title_activity_square"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,6 +36,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.huawei.bloomfate.ui.LoginActivity" />
+        </activity>
+        <activity
+            android:name=".ui.PermissionActivity"
+            android:label="@string/title_activity_permission"
+            android:parentActivityName=".ui.SquareActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.huawei.bloomfate.ui.SquareActivity" />
         </activity>
     </application>
 

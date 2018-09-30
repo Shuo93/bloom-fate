@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.huawei.bloomfate.R;
-import com.huawei.bloomfate.ui.PersonFragment.OnListFragmentInteractionListener;
+import com.huawei.bloomfate.ui.PermissionFragment.OnListFragmentInteractionListener;
 import com.huawei.bloomfate.ui.dummy.DummyContent.DummyItem;
 
 import java.util.List;
@@ -17,12 +17,12 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyPersonRecyclerViewAdapter extends RecyclerView.Adapter<MyPersonRecyclerViewAdapter.ViewHolder> {
+public class MyPermissionRecyclerViewAdapter extends RecyclerView.Adapter<MyPermissionRecyclerViewAdapter.ViewHolder> {
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyPersonRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyPermissionRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -30,7 +30,7 @@ public class MyPersonRecyclerViewAdapter extends RecyclerView.Adapter<MyPersonRe
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_person, parent, false);
+                .inflate(R.layout.fragment_permission, parent, false);
         return new ViewHolder(view);
     }
 

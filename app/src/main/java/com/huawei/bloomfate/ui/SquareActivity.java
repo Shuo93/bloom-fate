@@ -1,5 +1,6 @@
 package com.huawei.bloomfate.ui;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -95,6 +96,11 @@ public class SquareActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_permission) {
+            Intent intent = new Intent(this, PermissionActivity.class);
+            startActivity(intent);
             return true;
         }
 

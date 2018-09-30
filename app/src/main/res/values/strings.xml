@@ -19,9 +19,15 @@
     <string name="tab_text_2">我的收藏</string>
     <string name="tab_text_3">发出邀请</string>
     <string name="tab_text_4">收到邀请</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">基本设置</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="opposite_sex">异性</string>
     <string name="show_confirm_date_only">只显示已确认的约会</string>
+    <string name="action_permission">互看权限</string>
+    <string name="title_activity_permission">PermissionActivity</string>
+    <string name="title_home">关注的人</string>
+    <string name="title_dashboard">发起的互看</string>
+    <string name="title_notifications">收到的互看</string>
+    <string name="my_name">程烁</string>
 </resources>
