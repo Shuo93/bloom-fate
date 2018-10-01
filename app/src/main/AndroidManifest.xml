@@ -30,8 +30,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.huawei.bloomfate.ui.LoginActivity" />
-
-
         </activity>
         <activity android:name=".ui.BioActivity">
             <intent-filter>
@@ -40,6 +38,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.PermissionActivity"
+            android:label="@string/title_activity_permission"
+            android:parentActivityName=".ui.SquareActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.huawei.bloomfate.ui.SquareActivity" />
+        </activity>
+
+
     </application>
 
 </manifest>

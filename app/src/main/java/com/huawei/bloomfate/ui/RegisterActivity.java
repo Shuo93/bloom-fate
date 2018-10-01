@@ -22,6 +22,10 @@ public class RegisterActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                RegisterActivityFragment fragment = (RegisterActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                if (fragment != null) {
+                    fragment.upload();
+                }
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
