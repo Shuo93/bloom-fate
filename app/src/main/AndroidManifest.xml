@@ -21,7 +21,13 @@
         <activity
             android:name=".ui.SquareActivity"
             android:label="@string/title_activity_square"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.RegisterActivity"
             android:label="@string/title_activity_register"
@@ -32,11 +38,6 @@
                 android:value="com.huawei.bloomfate.ui.LoginActivity" />
         </activity>
         <activity android:name=".ui.BioActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity

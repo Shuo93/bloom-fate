@@ -90,7 +90,7 @@ public class BioFragment extends Fragment {
         job_measure.setRating(5);
         job_measure.setIsIndicator(true);
         TextView textView = new TextView(getActivity());
-        textView.setText(R.string.hello_blank_fragment);
+        textView.setText("test");
         return view;
     }
 

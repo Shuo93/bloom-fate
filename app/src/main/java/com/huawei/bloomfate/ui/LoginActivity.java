@@ -2,7 +2,10 @@ package com.huawei.bloomfate.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,8 +15,16 @@ import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.huawei.bloomfate.R;
+import com.huawei.bloomfate.util.FabricService;
+import com.huawei.bloomfate.util.SafeAsyncTask;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
 
 /**
  * A login screen that offers login via email/password.
@@ -166,7 +177,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(this, email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -214,6 +225,49 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    public void register(View view) {
+         new RegisterTask(this, mEmailView.getText().toString(), mPasswordView.getText().toString()).execute();
+    }
+
+    private static final class RegisterTask extends SafeAsyncTask<LoginActivity, Void, Void, Boolean> {
+
+        private final String email;
+        private final String password;
+
+        RegisterTask(LoginActivity reference, String email, String password) {
+            super(reference);
+            this.email = email;
+            this.password = password;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            String func = "register";
+            JSONObject object = new JSONObject();
+            try {
+                object.put("username", email);
+                object.put("password", password);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String args = object.toString();
+            return FabricService.getConnection().invoke(func, args);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (!success) {
+                Toast.makeText(getReference(), "注册失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (checkWeakReference()) {
+                getReference().showProgress(false);
+                Intent intent = new Intent(getReference(), SquareActivity.class);
+                getReference().startActivity(intent);
+            }
         }
     }
 
@@ -275,56 +329,49 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public static final class UserLoginTask extends SafeAsyncTask<LoginActivity, Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
+        public UserLoginTask(LoginActivity reference, String mEmail, String mPassword) {
+            super(reference);
+            this.mEmail = mEmail;
+            this.mPassword = mPassword;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
+            String func = "login";
+            JSONObject object = new JSONObject();
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                object.put("username", mEmail);
+                object.put("password", mPassword);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-//            for (String credential : DUMMY_CREDENTIALS) {
-//                String[] pieces = credential.split(":");
-//                if (pieces[0].equals(mEmail)) {
-//                    // Account exists, return true if the password matches.
-//                    return pieces[1].equals(mPassword);
-//                }
-//            }
-
-            // TODO: register the new account here.
-            return true;
+            String args = object.toString();
+            String result = new String(FabricService.getConnection().query(func, args));
+            return result.equals("success");
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
+        protected void onPostExecute(Boolean success) {
+            if (!checkWeakReference()) {
+                return;
+            }
+            LoginActivity loginActivity = getReference();
+
+            loginActivity.mAuthTask = null;
+            loginActivity.showProgress(false);
 
             if (success) {
-                finish();
+                Intent intent = new Intent(getReference(), SquareActivity.class);
+                getReference().startActivity(intent);
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                loginActivity.mPasswordView.setError(loginActivity.getString(R.string.error_incorrect_password));
+                loginActivity.mPasswordView.requestFocus();
             }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
         }
     }
 }

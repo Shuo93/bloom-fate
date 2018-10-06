@@ -1,0 +1,11 @@
+channelId: channel
+chaincodeId: fatecc
+chaincodeVersion: 1.0
+msp: xxx
+peerHost: xxx
+peerOverrideAuthority: xxx
+peerPort: xxx
+eventPort: xxx
+ordererHost: xxx
+ordererOverrideAuthority: xxx
+ordererPort: xxx

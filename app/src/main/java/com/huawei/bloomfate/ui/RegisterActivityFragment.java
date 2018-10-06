@@ -3,7 +3,6 @@ package com.huawei.bloomfate.ui;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,13 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.huawei.bloomfate.R;
-import com.huawei.bloomfate.util.FabricConnection;
+import com.huawei.bloomfate.util.FabricService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -140,7 +137,7 @@ public class RegisterActivityFragment extends Fragment {
         @Override
         protected Integer doInBackground(Void... voids) {
             String jsonStr = getJsonArg();
-            FabricConnection.getInstance().invoke("uploadResume", jsonStr);
+            FabricService.getConnection().invoke("uploadResume", jsonStr);
             return 200;
         }
 

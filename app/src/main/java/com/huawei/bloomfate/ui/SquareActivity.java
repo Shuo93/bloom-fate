@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -23,13 +24,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.huawei.bloomfate.R;
+import com.huawei.bloomfate.ui.dummy.DummyContent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SquareActivity extends AppCompatActivity {
+public class SquareActivity extends AppCompatActivity implements
+        PersonFragment.OnListFragmentInteractionListener,
+        DateFragment.OnListFragmentInteractionListener,
+        DateDialogFragment.DateDialogListener
+{
 
     private static final String TAG = "SquareActivity";
 
@@ -62,7 +68,7 @@ public class SquareActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
+        mViewPager.setOffscreenPageLimit(2);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -105,6 +111,30 @@ public class SquareActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+        DateDialogFragment dialog = new DateDialogFragment();
+        dialog.show(getSupportFragmentManager(), "date");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        dialog.dismiss();
+
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(String item) {
+        InvitationDialog dialog = new InvitationDialog();
+        dialog.show(getSupportFragmentManager(), "invitation");
     }
 
     /**
@@ -150,15 +180,19 @@ public class SquareActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         fragmentArr.put(position, PersonFragment.newInstance(PersonFragment.Type.ALL));
+                        Log.i(TAG, "Fragment 0 created");
                         break;
                     case 1:
                         fragmentArr.put(position, PersonFragment.newInstance(PersonFragment.Type.LIKE));
+                        Log.i(TAG, "Fragment 1 created");
                         break;
                     case 2:
                         fragmentArr.put(position, DateFragment.newInstance(DateFragment.Type.SEND));
+                        Log.i(TAG, "Fragment 2 created");
                         break;
                     case 3:
                         fragmentArr.put(position, DateFragment.newInstance(DateFragment.Type.RECEIVE));
+                        Log.i(TAG, "Fragment 3 created");
                         break;
                     default:
                         Log.e(TAG, "position shouldn't more than 4");

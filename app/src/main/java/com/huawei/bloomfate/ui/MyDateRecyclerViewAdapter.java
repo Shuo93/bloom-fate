@@ -36,7 +36,7 @@ public class MyDateRecyclerViewAdapter extends RecyclerView.Adapter<MyDateRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
+//        holder.mItem = mValues.get(position);
 //        holder.mIdView.setText(mValues.get(position).id);
 //        holder.mContentView.setText(mValues.get(position).content);
 
@@ -61,7 +61,7 @@ public class MyDateRecyclerViewAdapter extends RecyclerView.Adapter<MyDateRecycl
         public final View mView;
 //        public final TextView mIdView;
 //        public final TextView mContentView;
-        public DummyItem mItem;
+        public String mItem;
 
         public ViewHolder(View view) {
             super(view);
