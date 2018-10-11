@@ -40,8 +40,8 @@
                 android:isIndicator="false"
                 android:numStars="5"
                 android:stepSize="1"
-                app:layout_constraintStart_toStartOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                app:layout_constraintStart_toStartOf="@+id/photo_image"
+                app:layout_constraintTop_toBottomOf="@+id/photo_image" />
 
             <RatingBar
                 android:id="@+id/edu_measure"
@@ -80,7 +80,7 @@
                 android:numStars="5"
                 android:rating="5"
                 android:text="姓名："
-                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/photo_image"
                 app:layout_constraintTop_toBottomOf="@+id/general_measure" />
 
             <TextView
@@ -114,7 +114,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/photo_measure" />
 
             <TextView
-                android:id="@+id/textView14"
+                android:id="@+id/signature_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -128,11 +128,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="所在城市："
-                app:layout_constraintStart_toStartOf="@+id/textView14"
-                app:layout_constraintTop_toBottomOf="@+id/textView14" />
+                app:layout_constraintStart_toStartOf="@+id/signature_tv"
+                app:layout_constraintTop_toBottomOf="@+id/signature_tv" />
 
             <TextView
-                android:id="@+id/textView16"
+                android:id="@+id/status_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -146,8 +146,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="毕业院校："
-                app:layout_constraintStart_toStartOf="@+id/textView16"
-                app:layout_constraintTop_toBottomOf="@+id/textView16" />
+                app:layout_constraintStart_toStartOf="@+id/status_tv"
+                app:layout_constraintTop_toBottomOf="@+id/status_tv" />
 
             <TextView
                 android:id="@+id/textView8"
@@ -177,7 +177,7 @@
                 app:layout_constraintStart_toEndOf="@+id/name_view" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/photo_image"
                 android:layout_width="96dp"
                 android:layout_height="93dp"
                 android:layout_marginStart="16dp"
@@ -218,7 +218,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                app:layout_constraintBaseline_toBaselineOf="@+id/textView14"
+                app:layout_constraintBaseline_toBaselineOf="@+id/signature_tv"
                 app:layout_constraintStart_toStartOf="@+id/phone" />
 
             <TextView
@@ -234,7 +234,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                app:layout_constraintBaseline_toBaselineOf="@+id/textView16"
+                app:layout_constraintBaseline_toBaselineOf="@+id/status_tv"
                 app:layout_constraintStart_toStartOf="@+id/location" />
 
             <TextView

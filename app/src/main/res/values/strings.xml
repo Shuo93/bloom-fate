@@ -19,7 +19,7 @@
     <string name="tab_text_2">我的收藏</string>
     <string name="tab_text_3">发出邀请</string>
     <string name="tab_text_4">收到邀请</string>
-    <string name="action_settings">基本设置</string>
+    <string name="action_information">个人信息</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="opposite_sex">异性</string>
@@ -37,4 +37,5 @@
     <string name="date_positive">是的</string>
     <string name="register">注册</string>
     <string name="login">登录</string>
+    <string name="action_settings">基本设置</string>
 </resources>

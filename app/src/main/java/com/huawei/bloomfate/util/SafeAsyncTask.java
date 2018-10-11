@@ -13,7 +13,7 @@ public abstract class SafeAsyncTask<T, Params, Progress, Result> extends AsyncTa
     }
 
     protected boolean checkWeakReference() {
-        return weakReference.get() == null;
+        return weakReference.get() != null;
     }
 
     protected T getReference() {

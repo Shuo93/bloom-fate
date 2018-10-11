@@ -4,12 +4,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.huawei.bloomfate.R;
+import com.huawei.bloomfate.model.Date;
 import com.huawei.bloomfate.ui.DateFragment.OnListFragmentInteractionListener;
 import com.huawei.bloomfate.ui.dummy.DummyContent.DummyItem;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -19,12 +27,15 @@ import java.util.List;
  */
 public class MyDateRecyclerViewAdapter extends RecyclerView.Adapter<MyDateRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<JSONObject> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyDateRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    private DateFragment.Type type;
+
+    public MyDateRecyclerViewAdapter(List<JSONObject> items, OnListFragmentInteractionListener listener, DateFragment.Type type) {
         mValues = items;
         mListener = listener;
+        this.type = type;
     }
 
     @Override
@@ -59,15 +70,61 @@ public class MyDateRecyclerViewAdapter extends RecyclerView.Adapter<MyDateRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-//        public final TextView mIdView;
-//        public final TextView mContentView;
-        public String mItem;
+        public final TextView nameTv;
+        public final TextView statusTv;
+        final TextView locationTv;
+        final TextView dateTimeTv;
+        final ImageView photoImage;
+        public JSONObject mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-//            mIdView = (TextView) view.findViewById(R.id.item_number);
-//            mContentView = (TextView) view.findViewById(R.id.content);
+            nameTv = (TextView) view.findViewById(R.id.name_tv);
+            statusTv = (TextView) view.findViewById(R.id.status_tv);
+            photoImage = view.findViewById(R.id.photo_image);
+            dateTimeTv = view.findViewById(R.id.sendTime_tv);
+            locationTv = view.findViewById(R.id.location_tv);
+        }
+
+        void inflate() throws JSONException {
+            if (type == DateFragment.Type.SEND) {
+                nameTv.setText(mItem.getString("receiver_id"));
+            } else if (type == DateFragment.Type.RECEIVE) {
+                nameTv.setText(mItem.getString("sender_id"));
+            }
+            String status = mItem.getString("status");
+            statusTv.setText(convertStatus(status));
+            try {
+                dateTimeTv.setText(convertDateTime(mItem.getString("date_time")));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        private String convertDateTime(String timestamp) throws ParseException {
+            DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+            java.util.Date date = format.parse(timestamp);
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return dateFormat.format(date);
+        }
+
+        private String convertStatus(String status) {
+            switch (status) {
+                case "pending":
+                    return "待确认";
+                case "reject":
+                    return "已拒绝";
+                case "approve":
+                    return "已同意";
+                case "confirm":
+                    return "对方已确认";
+                case "confirmed":
+                    return "可评价";
+                default:
+                    return "未知状态";
+            }
         }
 
 //        @Override

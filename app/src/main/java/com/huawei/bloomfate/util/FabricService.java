@@ -1,6 +1,8 @@
 package com.huawei.bloomfate.util;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +25,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class FabricService {
+
+    private static final String TAG = "FabricService";
 
     private FabricService() {
         mapper = new ObjectMapper();
@@ -148,20 +152,29 @@ public class FabricService {
     private ObjectMapper mapper;
     private FabricSdk sdk;
 
-    public void loadConfig(Context context) {
+    public boolean loadConfig(Context context) {
         try {
             InputStream is = context.getAssets().open("config.yaml");
             ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
             config = yamlMapper.readValue(is, FabricConfig.class);
             key = getStringFromFile(context, "key.pem");
             cert = getStringFromFile(context, "cert.pem");
-            peerCert = getStringFromFile(context, "peer.cert");
+            peerCert = getStringFromFile(context, "peer.crt");
             ordererCert = getStringFromFile(context, "orderer.crt");
+            Log.i(TAG, "Channel ID: " + config.channelId);
+            Log.i(TAG, "Chaincode ID: " + config.chaincodeId);
+            Log.i(TAG, "Chaincode Version: " + config.chaincodeVersion);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
 
 
+    }
+
+    public String getConfig() {
+        return "Channel ID: " + config.channelId + "\nChaincode ID: " + config.chaincodeId + "\nChaincode Version: " + config.chaincodeVersion;
     }
 
     private String getStringFromFile(final Context context, final String filename) throws IOException {
@@ -195,15 +208,15 @@ public class FabricService {
         return false;
     }
 
-    public <T> List<T> query(String func, String args, Class<T> valueType) {
-        return getResults(query(func, args));
-    }
+//    public <T> List<T> query(String func, String args, Class<T> valueType) {
+//        return getResults(query(func, args));
+//    }
 
-    public <T> List<T> query(String func, Class<T> valueType) {
-        return getResults(query(func));
-    }
+//    public <T> List<T> query(String func, Class<T> valueType) {
+//        return getResults(query(func));
+//    }
 
-    private <T> List<T> getResults(byte[] response) {
+    public <T> List<T> getResults(String response, Class<T> valueType) {
         try {
             return mapper.readValue(response, new TypeReference<List<T>>() {});
         } catch (IOException e) {
@@ -212,7 +225,7 @@ public class FabricService {
         return new ArrayList<>();
     }
 
-    public byte[] query(String func, String args) {
+    public String query(String func, String args) {
         try {
             QueryChaincodeRequest request = new QueryChaincodeRequestBuilder()
                     .setChannelId(config.channelId)
@@ -222,14 +235,14 @@ public class FabricService {
                     .setPeersInfo(getPeerInfos())
                     .setTls(true)
                     .build();
-            return sdk.query(request);
+            return new String(sdk.query(request));
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public byte[] query(String func) {
+    public String query(String func) {
         return query(func, "");
     }
 

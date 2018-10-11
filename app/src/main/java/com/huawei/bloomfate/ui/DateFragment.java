@@ -10,10 +10,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.huawei.bloomfate.R;
+import com.huawei.bloomfate.model.Date;
 import com.huawei.bloomfate.ui.dummy.DummyContent;
 import com.huawei.bloomfate.ui.dummy.DummyContent.DummyItem;
+import com.huawei.bloomfate.util.FabricService;
+import com.huawei.bloomfate.util.SafeAsyncTask;
+import com.huawei.bloomfate.util.SharedPreferencesHelper;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -33,6 +46,13 @@ public class DateFragment extends Fragment {
     private static final String ARG_TYPE = "browse-type";
     private Type type;
     private OnListFragmentInteractionListener mListener;
+
+    private List<JSONObject> dateList;
+    private MyDateRecyclerViewAdapter adapter;
+
+    private String userId;
+
+//    private Switch switchStatus;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -69,16 +89,41 @@ public class DateFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new MyDateRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            dateList = new ArrayList<>();
+            adapter = new MyDateRecyclerViewAdapter(dateList, mListener, type);
+            recyclerView.setAdapter(adapter);
+            refresh();
         }
         Log.v(TAG, type.name());
         return root;
+    }
+
+    public void refresh() {
+        RefreshTask task = new RefreshTask(this);
+        JSONObject jsonObject = new JSONObject();
+        String userType;
+        if (type == Type.SEND) {
+            userType = "sender_id";
+        } else if (type == Type.RECEIVE) {
+            userType = "receiver_id";
+        } else {
+            userType = "";
+        }
+        try {
+            jsonObject.put("userType", userType);
+            jsonObject.put("userId", userId);
+            jsonObject.put("status", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        task.execute("queryDate", jsonObject.toString());
     }
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        userId = SharedPreferencesHelper.getUserId(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
@@ -105,6 +150,42 @@ public class DateFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(String item);
+        void onListFragmentInteraction(JSONObject object);
+    }
+
+    private static final class RefreshTask extends SafeAsyncTask<DateFragment, String, Void, String> {
+
+        public RefreshTask(DateFragment reference) {
+            super(reference);
+        }
+
+        @Override
+        protected String doInBackground(String... funcAndParams) {
+            String func = funcAndParams[0];
+            String args = funcAndParams[1];
+            return FabricService.getConnection().query(func, args);
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            if (!checkWeakReference()) {
+                return;
+            }
+            List<JSONObject> item = new ArrayList<>();
+            try {
+
+                JSONArray jsonArray = new JSONArray(response);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    item.add(jsonArray.getJSONObject(i));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            DateFragment fragment = getReference();
+            fragment.dateList.clear();
+            fragment.dateList.addAll(item);
+            fragment.adapter.notifyDataSetChanged();
+            Toast.makeText(getReference().getContext(), "约会列表更新成功", Toast.LENGTH_SHORT).show();
+        }
     }
 }

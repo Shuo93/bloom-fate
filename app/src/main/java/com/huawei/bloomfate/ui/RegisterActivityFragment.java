@@ -2,9 +2,9 @@ package com.huawei.bloomfate.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.huawei.bloomfate.R;
 import com.huawei.bloomfate.util.FabricService;
+import com.huawei.bloomfate.util.SafeAsyncTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -127,24 +128,40 @@ public class RegisterActivityFragment extends Fragment {
     }
 
     public void upload() {
-        RegisterTask task = new RegisterTask();
+        RegisterTask task = new RegisterTask(this, getJsonArg());
         task.execute();
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class RegisterTask extends AsyncTask<Void, Void, Integer> {
+    private static final class RegisterTask extends SafeAsyncTask<RegisterActivityFragment, Void, Void, Boolean> {
 
-        @Override
-        protected Integer doInBackground(Void... voids) {
-            String jsonStr = getJsonArg();
-            FabricService.getConnection().invoke("uploadResume", jsonStr);
-            return 200;
+        private String args;
+
+        public RegisterTask(RegisterActivityFragment reference, String args) {
+            super(reference);
+            this.args = args;
         }
 
         @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            Toast.makeText(context, "success", Toast.LENGTH_SHORT).show();
+        protected Boolean doInBackground(Void... voids) {
+            return FabricService.getConnection().invoke("uploadResume", args);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (!checkWeakReference()) {
+                return;
+            }
+            Context context = getReference().getContext();
+            if (context == null) {
+                return;
+            }
+            if (success) {
+                Toast.makeText(context, "success", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, SquareActivity.class);
+                context.startActivity(intent);
+                return;
+            }
+            Toast.makeText(context, "上传信息失败", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -24,7 +24,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.huawei.bloomfate.R;
+import com.huawei.bloomfate.model.PersonBasic;
 import com.huawei.bloomfate.ui.dummy.DummyContent;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,7 +104,9 @@ public class SquareActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_information) {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
             return true;
         }
         if (id == R.id.action_permission) {
@@ -114,8 +119,9 @@ public class SquareActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(PersonBasic item) {
         DateDialogFragment dialog = new DateDialogFragment();
+        dialog.setUserId(item.getUserId());
         dialog.show(getSupportFragmentManager(), "date");
     }
 
@@ -132,7 +138,7 @@ public class SquareActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(String item) {
+    public void onListFragmentInteraction(JSONObject object) {
         InvitationDialog dialog = new InvitationDialog();
         dialog.show(getSupportFragmentManager(), "invitation");
     }

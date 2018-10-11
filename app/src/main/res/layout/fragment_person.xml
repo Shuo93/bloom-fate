@@ -9,48 +9,48 @@
     android:background="@color/listBackground">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="程烁"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/photo_image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/age_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="25"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView13"
-        app:layout_constraintStart_toEndOf="@+id/textView13" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/location_tv"
+        app:layout_constraintStart_toEndOf="@+id/location_tv" />
 
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/sex_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="男"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView11"
-        app:layout_constraintStart_toEndOf="@+id/textView11" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/age_tv"
+        app:layout_constraintStart_toEndOf="@+id/age_tv" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/location_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="杭州"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView"
-        app:layout_constraintStart_toEndOf="@+id/textView" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/name_tv"
+        app:layout_constraintStart_toEndOf="@+id/name_tv" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/photo_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -62,7 +62,7 @@
         app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
-        android:id="@+id/textView14"
+        android:id="@+id/signature_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -70,6 +70,6 @@
         android:layout_marginEnd="8dp"
         android:text="大不自多，海纳江河。"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintStart_toEndOf="@+id/photo_image"
+        app:layout_constraintTop_toBottomOf="@+id/name_tv" />
 </android.support.constraint.ConstraintLayout>

@@ -21,9 +21,15 @@ import java.util.Calendar;
 
 public class DateDialogFragment extends DialogFragment {
 
+    private String userId;
+
     private Context context;
 
     private static final String TAG = "DateDialogFragment";
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public interface DateDialogListener {
         void onDialogPositiveClick(DialogFragment dialog);

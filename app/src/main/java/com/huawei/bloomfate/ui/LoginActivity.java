@@ -2,14 +2,13 @@ package com.huawei.bloomfate.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
@@ -18,18 +17,19 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.huawei.bloomfate.R;
+import com.huawei.bloomfate.util.Constants;
 import com.huawei.bloomfate.util.FabricService;
 import com.huawei.bloomfate.util.SafeAsyncTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
-
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity { //implements LoaderCallbacks<Cursor> {
+
+    private static final String TAG = "LoginActivity";
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -84,6 +84,9 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        InitializeTask task = new InitializeTask(this);
+        task.execute();
     }
 
 //    private void populateAutoComplete() {
@@ -245,15 +248,19 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            // TODO: 2018/10/9 生成公私钥
+            String publicKey = "";
             String func = "register";
             JSONObject object = new JSONObject();
             try {
                 object.put("username", email);
                 object.put("password", password);
+                object.put("publicKey", publicKey);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             String args = object.toString();
+            Log.i(TAG, args);
             return FabricService.getConnection().invoke(func, args);
         }
 
@@ -325,6 +332,27 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
 //        int IS_PRIMARY = 1;
 //    }
 
+    public static final class InitializeTask extends SafeAsyncTask<LoginActivity, Void, Void, Boolean> {
+
+        public InitializeTask(LoginActivity reference) {
+            super(reference);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (!checkWeakReference()) {
+                return false;
+            }
+            return FabricService.getConnection().loadConfig(getReference());
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+
+            Toast.makeText(getReference(), result ? FabricService.getConnection().getConfig() : "初始化配置失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -351,8 +379,11 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
                 e.printStackTrace();
             }
             String args = object.toString();
-            String result = new String(FabricService.getConnection().query(func, args));
-            return result.equals("success");
+            String result = FabricService.getConnection().query(func, args);
+            SharedPreferences preferences = getReference().getSharedPreferences(Constants.APP_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(Constants.USER_ID, result);
+            return editor.commit();
         }
 
         @Override
@@ -363,11 +394,11 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
             LoginActivity loginActivity = getReference();
 
             loginActivity.mAuthTask = null;
-            loginActivity.showProgress(false);
 
             if (success) {
-                Intent intent = new Intent(getReference(), SquareActivity.class);
-                getReference().startActivity(intent);
+                Intent intent = new Intent(loginActivity, SquareActivity.class);
+                loginActivity.startActivity(intent);
+                loginActivity.showProgress(false);
             } else {
                 loginActivity.mPasswordView.setError(loginActivity.getString(R.string.error_incorrect_password));
                 loginActivity.mPasswordView.requestFocus();
