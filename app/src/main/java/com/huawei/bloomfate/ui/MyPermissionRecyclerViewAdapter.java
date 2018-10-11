@@ -27,12 +27,12 @@ import java.util.List;
  */
 public class MyPermissionRecyclerViewAdapter extends RecyclerView.Adapter<MyPermissionRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<JSONObject> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    private DateFragment.Type type;
+    private PermissionFragment.Type type;
 
-    public MyPermissionRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyPermissionRecyclerViewAdapter(List<JSONObject> items, OnListFragmentInteractionListener listener, PermissionFragment.Type type) {
         mValues = items;
         mListener = listener;
         this.type = type;
@@ -47,10 +47,12 @@ public class MyPermissionRecyclerViewAdapter extends RecyclerView.Adapter<MyPerm
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-//        holder.mItem = mValues.get(position);
-//        holder.mIdView.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).content);
-
+        holder.mItem = mValues.get(position);
+        try {
+            holder.inflate();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,9 +97,9 @@ public class MyPermissionRecyclerViewAdapter extends RecyclerView.Adapter<MyPerm
         }
 
         void inflate() throws JSONException {
-            if (type == DateFragment.Type.SEND) {
+            if (type == PermissionFragment.Type.SEND) {
                 nameTv.setText(mItem.getString("receiver_name"));
-            } else if (type == DateFragment.Type.RECEIVE) {
+            } else if (type == PermissionFragment.Type.RECEIVE) {
                 nameTv.setText(mItem.getString("sender_name"));
             }
             String status = mItem.getString("status");

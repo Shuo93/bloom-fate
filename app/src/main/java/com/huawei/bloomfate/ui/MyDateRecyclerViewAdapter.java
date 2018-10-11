@@ -47,10 +47,12 @@ public class MyDateRecyclerViewAdapter extends RecyclerView.Adapter<MyDateRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-//        holder.mItem = mValues.get(position);
-//        holder.mIdView.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).content);
-
+        holder.mItem = mValues.get(position);
+        try {
+            holder.inflate();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,9 +91,9 @@ public class MyDateRecyclerViewAdapter extends RecyclerView.Adapter<MyDateRecycl
 
         void inflate() throws JSONException {
             if (type == DateFragment.Type.SEND) {
-                nameTv.setText(mItem.getString("receiver_id"));
+                nameTv.setText(mItem.getString("receiver_name"));
             } else if (type == DateFragment.Type.RECEIVE) {
-                nameTv.setText(mItem.getString("sender_id"));
+                nameTv.setText(mItem.getString("sender_name"));
             }
             String status = mItem.getString("status");
             statusTv.setText(convertStatus(status));

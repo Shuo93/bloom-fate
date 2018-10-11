@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.huawei.bloomfate.R;
 
-public class PermissionActivity extends AppCompatActivity {
+import org.json.JSONObject;
+
+public class PermissionActivity extends AppCompatActivity implements PermissionFragment.OnListFragmentInteractionListener {
 
     private static final String TAG = "PermissionActivity";
 
@@ -77,6 +79,11 @@ public class PermissionActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.fragment, PermissionFragmentManger.getInstance().getFragmentInstance(0)).commit();
         }
         
+    }
+
+    @Override
+    public void onListFragmentInteraction(JSONObject item) {
+
     }
 
     private static class PermissionFragmentManger {
