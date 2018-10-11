@@ -14,6 +14,8 @@ import com.huawei.bloomfate.R;
 import com.huawei.bloomfate.ui.dummy.DummyContent;
 import com.huawei.bloomfate.ui.dummy.DummyContent.DummyItem;
 
+import org.json.JSONObject;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -99,6 +101,6 @@ public class PermissionFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(JSONObject item);
     }
 }
