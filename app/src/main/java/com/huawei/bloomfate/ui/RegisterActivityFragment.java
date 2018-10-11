@@ -13,9 +13,16 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huawei.bloomfate.R;
+import com.huawei.bloomfate.model.Edu;
+import com.huawei.bloomfate.model.Job;
+import com.huawei.bloomfate.model.Person;
+import com.huawei.bloomfate.model.PersonBasic;
 import com.huawei.bloomfate.util.FabricService;
 import com.huawei.bloomfate.util.SafeAsyncTask;
+import com.huawei.bloomfate.util.SharedPreferencesHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,6 +55,8 @@ public class RegisterActivityFragment extends Fragment {
     private String education;
     private  String photoHash;
 
+    private String userId;
+
     public RegisterActivityFragment() {
     }
 
@@ -55,6 +64,7 @@ public class RegisterActivityFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        userId = SharedPreferencesHelper.getUserId(context);
     }
 
     @Override
@@ -107,24 +117,42 @@ public class RegisterActivityFragment extends Fragment {
     }
 
     private String getJsonArg() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("name", nameView.getText().toString());
-            jsonObject.put("age", ageView.getText().toString());
-            jsonObject.put("sex", sex);
-            jsonObject.put("phone", phoneView.getText().toString());
-            jsonObject.put("wechat", wechatView.getText().toString());
-            jsonObject.put("city", cityView.getText().toString());
-            jsonObject.put("education", education);
-            jsonObject.put("school", schoolView.getText().toString());
-            jsonObject.put("company", companyView.getText().toString());
-            jsonObject.put("salary", salaryView.getText().toString());
-            jsonObject.put("photoHash", photoHash);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject.toString();
+        PersonBasic basic = new PersonBasic();
+        basic.setUserId(userId);
+        basic.setName(nameView.getText().toString());
+        basic.setAge(ageView.getText().toString());
+        basic.setSex(sex);
+        basic.setLocation(cityView.getText().toString());
+        basic.setPhotoHash("");
+        basic.setPhotoFormat("");
+        basic.setPhone(phoneView.getText().toString());
+        basic.setEmail(wechatView.getText().toString());
 
+        Edu edu = new Edu();
+        edu.setDegree(education);
+        edu.setSchool(schoolView.getText().toString());
+        edu.setEncryptedKey("");
+        edu.setSignature("");
+
+        Job job = new Job();
+        job.setCompany(companyView.getText().toString());
+        job.setJob("");
+        job.setSalary(salaryView.getText().toString());
+        job.setEncryptedKey("");
+        job.setSignature("");
+
+        Person person = new Person();
+        person.setBasic(basic);
+        person.setEducation(edu);
+        person.setOccupation(job);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(person);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public void upload() {

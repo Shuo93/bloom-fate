@@ -1,12 +1,34 @@
 package com.huawei.bloomfate.model;
 
-import java.util.List;
-
 public class Person {
 
    private PersonBasic basic;
 
-   private List<Edu> eduList;
+   private Edu education;
 
-   private Job job;
+   private Job occupation;
+
+   public PersonBasic getBasic() {
+      return basic;
+   }
+
+   public void setBasic(PersonBasic basic) {
+      this.basic = basic;
+   }
+
+   public Edu getEducation() {
+      return education;
+   }
+
+   public void setEducation(Edu education) {
+      this.education = education;
+   }
+
+   public Job getOccupation() {
+      return occupation;
+   }
+
+   public void setOccupation(Job occupation) {
+      this.occupation = occupation;
+   }
 }
