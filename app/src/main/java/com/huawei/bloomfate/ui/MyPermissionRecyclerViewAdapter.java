@@ -129,7 +129,6 @@ public class MyPermissionRecyclerViewAdapter extends RecyclerView.Adapter<MyPerm
                     return "已同意";
                 default:
                     return "未知状态";
-
             }
         }
 
