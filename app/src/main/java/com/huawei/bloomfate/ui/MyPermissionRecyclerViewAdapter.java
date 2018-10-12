@@ -71,26 +71,27 @@ public class MyPermissionRecyclerViewAdapter extends RecyclerView.Adapter<MyPerm
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+
+        final View mView;
 //        public final TextView mIdView;
 //        public final TextView mContentView;
-        public  final ImageView photoImage;
-        public  final TextView nameTv;
-        public final TextView statusTv;
-        public final TextView typeTv;
-        public final TextView encryptedContentTv;
-        public final TextView sendTimeTv;
-        public JSONObject mItem;
+        final ImageView photoImage;
+        final TextView nameTv;
+        final TextView statusTv;
+        final TextView typeTv;
+        final TextView encryptedContentTv;
+        final TextView sendTimeTv;
+        JSONObject mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            photoImage = (ImageView) view.findViewById(R.id.photo_image);
-            nameTv = (TextView) view.findViewById(R.id.name_tv);
-            statusTv = (TextView) view.findViewById(R.id.status_tv);
-            typeTv = (TextView) view.findViewById(R.id.type_tv);
-            encryptedContentTv = (TextView) view.findViewById(R.id.encrypted_content_tv);
-            sendTimeTv = (TextView) view.findViewById(R.id.send_time_tv);
+            photoImage =  view.findViewById(R.id.photo_image);
+            nameTv =  view.findViewById(R.id.name_tv);
+            statusTv =  view.findViewById(R.id.status_tv);
+            typeTv =  view.findViewById(R.id.type_tv);
+            encryptedContentTv =  view.findViewById(R.id.encrypted_content_tv);
+            sendTimeTv =  view.findViewById(R.id.send_time_tv);
 
 //            mIdView = (TextView) view.findViewById(R.id.item_number);
 //            mContentView = (TextView) view.findViewById(R.id.content);

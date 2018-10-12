@@ -1,9 +1,13 @@
 package com.huawei.bloomfate.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +15,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huawei.bloomfate.R;
+import com.huawei.bloomfate.model.Edu;
+import com.huawei.bloomfate.model.Job;
+import com.huawei.bloomfate.model.Person;
+import com.huawei.bloomfate.model.PersonBasic;
+import com.huawei.bloomfate.model.Value;
 import com.huawei.bloomfate.util.FabricService;
 import com.huawei.bloomfate.util.SafeAsyncTask;
 
@@ -19,7 +30,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +46,18 @@ public class BioFragment extends Fragment {
     private RatingBar photo_measure;
     private RatingBar edu_measure;
     private RatingBar job_measure;
+
+    private TextView name;
+    private TextView sex;
+    private TextView age;
+    private TextView phone;
+    private TextView wechat;
+    private TextView city;
+    private TextView education;
+    private TextView school;
+    private TextView company;
+    private TextView salary;
+
 
     private String userId;
 
@@ -86,11 +108,21 @@ public class BioFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bio, container, false);
 
+        name = view.findViewById(R.id.name);
+        sex = view.findViewById(R.id.sex);
+        age = view.findViewById(R.id.age);
+        phone = view.findViewById(R.id.phone);
+        wechat = view.findViewById(R.id.wechat);
+        city = view.findViewById(R.id.city);
+        education = view.findViewById(R.id.education);
+        school = view.findViewById(R.id.school);
+        company = view.findViewById(R.id.company);
+        salary = view.findViewById(R.id.salary);
 
-        general_measure = (RatingBar)view.findViewById(R.id.general_measure);
-        photo_measure = (RatingBar)view.findViewById(R.id.photo_measure);
-        edu_measure = (RatingBar)view.findViewById(R.id.edu_measure);
-        job_measure = (RatingBar)view.findViewById(R.id.job_measure);
+        general_measure = view.findViewById(R.id.general_measure);
+        photo_measure = view.findViewById(R.id.photo_measure);
+        edu_measure = view.findViewById(R.id.edu_measure);
+        job_measure = view.findViewById(R.id.job_measure);
 
 
         //显示页面，初始值设置为5颗星
@@ -105,6 +137,8 @@ public class BioFragment extends Fragment {
 
         job_measure.setRating(5);
         job_measure.setIsIndicator(true);
+
+        refreshBio();
 
         return view;
 
@@ -152,7 +186,96 @@ public class BioFragment extends Fragment {
         mListener = null;
     }
 
-    public void refresh() {
+
+    private String getJsonArg() {
+        PersonBasic basic = new PersonBasic();
+        basic.setUserId(userId);
+        basic.setName(name.getText().toString());
+        basic.setAge(age.getText().toString());
+        basic.setSex(sex.getText().toString());
+        basic.setLocation(city.getText().toString());
+        basic.setPhotoHash("");
+        basic.setPhotoFormat("");
+        basic.setPhone(phone.getText().toString());
+        basic.setEmail(wechat.getText().toString());
+
+        Edu edu = new Edu();
+        edu.setDegree(education.getText().toString());
+        edu.setSchool(school.getText().toString());
+        edu.setEncryptedKey("");
+        edu.setSignature("");
+
+        Job job = new Job();
+        job.setCompany(company.getText().toString());
+        job.setJob("");
+        job.setSalary(salary.getText().toString());
+        job.setEncryptedKey("");
+        job.setSignature("");
+
+        Person person = new Person();
+        person.setBasic(basic);
+        person.setEducation(edu);
+        person.setOccupation(job);
+
+        general_measure.setIsIndicator(false); //可点击
+        photo_measure.setIsIndicator(false);
+        edu_measure.setIsIndicator(false);
+        job_measure.setIsIndicator(false);
+
+        Value value = new Value();
+        value.setGeneral(general_measure.getRating());
+        value.setPhoto(photo_measure.getRating());
+        value.setEdu(edu_measure.getRating());
+        value.setJob(job_measure.getRating());
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(person);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    public void upload() {
+        BioUploadTask up_task = new BioUploadTask(this, getJsonArg());
+        up_task.execute();
+    }
+
+    private static final class BioUploadTask extends SafeAsyncTask<BioFragment, Void, Void, Boolean> {
+
+        private String args;
+
+        public BioUploadTask(BioFragment reference, String args) {
+            super(reference);
+            this.args = args;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return FabricService.getConnection().invoke("measureCredit", args);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (!checkWeakReference()) {
+                return;
+            }
+            Context context = getReference().getContext();
+            if (context == null) {
+                return;
+            }
+            if (success) {
+                Toast.makeText(context, "success", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, SquareActivity.class);
+                context.startActivity(intent);
+                return;
+            }
+            Toast.makeText(context, "上传评分失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void refreshBio() {
         RefreshBioTask task = new RefreshBioTask(this);
         JSONObject jsonObject = new JSONObject();
         try {
@@ -162,7 +285,6 @@ public class BioFragment extends Fragment {
         }
         task.execute("queryCredit", jsonObject.toString());
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -207,7 +329,7 @@ public class BioFragment extends Fragment {
                 }
                 BioFragment fragment = getReference();
                 fragment.SetStar(item);
-                Toast.makeText(getReference().getContext(), "个人评价更新成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getReference().getContext(), "个人评分更新成功", Toast.LENGTH_SHORT).show();
 
             }
 

@@ -70,8 +70,8 @@ public class MyPersonRecyclerViewAdapter extends RecyclerView.Adapter<MyPersonRe
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            nameTv = (TextView) view.findViewById(R.id.name_tv);
-            sexTv = (TextView) view.findViewById(R.id.sex_tv);
+            nameTv =  view.findViewById(R.id.name_tv);
+            sexTv =  view.findViewById(R.id.sex_tv);
             locationTv = view.findViewById(R.id.location_tv);
             ageTv = view.findViewById(R.id.age_tv);
             signatureTv = view.findViewById(R.id.signature_tv);

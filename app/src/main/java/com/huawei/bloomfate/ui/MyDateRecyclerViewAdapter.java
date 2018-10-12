@@ -71,19 +71,19 @@ public class MyDateRecyclerViewAdapter extends RecyclerView.Adapter<MyDateRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView nameTv;
-        public final TextView statusTv;
+        final View mView;
+        final TextView nameTv;
+        final TextView statusTv;
         final TextView locationTv;
         final TextView dateTimeTv;
         final ImageView photoImage;
-        public JSONObject mItem;
+        JSONObject mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            nameTv = (TextView) view.findViewById(R.id.name_tv);
-            statusTv = (TextView) view.findViewById(R.id.status_tv);
+            nameTv =  view.findViewById(R.id.name_tv);
+            statusTv =  view.findViewById(R.id.status_tv);
             photoImage = view.findViewById(R.id.photo_image);
             dateTimeTv = view.findViewById(R.id.sendTime_tv);
             locationTv = view.findViewById(R.id.location_tv);
