@@ -162,10 +162,10 @@ public class FabricService {
             InputStream is = context.getAssets().open("config.yaml");
             ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
             config = yamlMapper.readValue(is, FabricConfig.class);
-            key = getStringFromFile(context, "377b60c3-0681-7669-40d1-6384f1e742b3_sk");
-            cert = getStringFromFile(context, "User1@0bae78ff1065db10f1eaaa771fae77519f7f14aa.peer-0bae78ff1065db10f1eaaa771fae77519f7f14aa.default.svc.cluster.local-cert.pem");
-            peerCert = getStringFromFile(context, "tlsca.0bae78ff1065db10f1eaaa771fae77519f7f14aa-cert.pem");
-            ordererCert = getStringFromFile(context, "tlsca.77660fe18ca88dcd61c9b27e250f31b3c6d9821b-cert.pem");
+            key = getStringFromFile(context, "key.pem");
+            cert = getStringFromFile(context, "cert.pem");
+            peerCert = getStringFromFile(context, "peer.crt");
+            ordererCert = getStringFromFile(context, "orderer.crt");
             Log.i(TAG, "Channel ID: " + config.channelId);
             Log.i(TAG, "Chaincode ID: " + config.chaincodeId);
             Log.i(TAG, "Chaincode Version: " + config.chaincodeVersion);

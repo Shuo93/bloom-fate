@@ -1,0 +1,13 @@
+channelId: chan1
+chaincodeId: fatecc1
+chaincodeVersion: 1
+msp: 0bae78ff1065db10f1eaaa771fae77519f7f14aaMSP
+
+peerHost: 49.4.6.248
+peerOverrideAuthority: peer-0bae78ff1065db10f1eaaa771fae77519f7f14aa-0.peer-0bae78ff1065db10f1eaaa771fae77519f7f14aa.default.svc.cluster.local
+peerPort: 30605
+eventPort: 30705
+
+ordererHost: 49.4.6.248
+ordererOverrideAuthority: orderer-77660fe18ca88dcd61c9b27e250f31b3c6d9821b-0.orderer-77660fe18ca88dcd61c9b27e250f31b3c6d9821b.default.svc.cluster.local
+ordererPort: 30805
