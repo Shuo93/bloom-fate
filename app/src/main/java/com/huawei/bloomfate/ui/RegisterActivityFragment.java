@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ import org.json.JSONObject;
  */
 
 public class RegisterActivityFragment extends Fragment {
+
+    private static final String TAG = "RegisterActivityFragmen";
 
     private Context context;
 
@@ -65,6 +68,7 @@ public class RegisterActivityFragment extends Fragment {
         super.onAttach(context);
         this.context = context;
         userId = SharedPreferencesHelper.getUserId(context);
+        Log.i(TAG, "User ID: " + userId);
     }
 
     @Override
@@ -156,22 +160,21 @@ public class RegisterActivityFragment extends Fragment {
     }
 
     public void upload() {
-        RegisterTask task = new RegisterTask(this, getJsonArg());
-        task.execute();
+        RegisterTask task = new RegisterTask(this);
+        task.execute("uploadPersonalInfo", getJsonArg());
     }
 
-    private static final class RegisterTask extends SafeAsyncTask<RegisterActivityFragment, Void, Void, Boolean> {
+    private static final class RegisterTask extends SafeAsyncTask<RegisterActivityFragment, String, Void, Boolean> {
 
-        private String args;
-
-        public RegisterTask(RegisterActivityFragment reference, String args) {
+        public RegisterTask(RegisterActivityFragment reference) {
             super(reference);
-            this.args = args;
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
-            return FabricService.getConnection().invoke("uploadResume", args);
+        protected Boolean doInBackground(String... funcAndParams) {
+            String func = funcAndParams[0];
+            String args = funcAndParams[1];
+            return FabricService.getConnection().invoke(func, args);
         }
 
         @Override
@@ -184,7 +187,7 @@ public class RegisterActivityFragment extends Fragment {
                 return;
             }
             if (success) {
-                Toast.makeText(context, "success", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "上传信息成功", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(context, SquareActivity.class);
                 context.startActivity(intent);
                 return;

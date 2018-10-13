@@ -239,7 +239,7 @@ public class FabricService {
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     public String query(String func) {

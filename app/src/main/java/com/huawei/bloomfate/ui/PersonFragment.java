@@ -197,7 +197,7 @@ public class PersonFragment extends Fragment {
             fragment.personList.clear();
             fragment.personList.addAll(items);
             fragment.adapter.notifyDataSetChanged();
-            Toast.makeText(getReference().getContext(), "收藏列表更新成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getReference().getContext(), items.isEmpty() ? "无数据" : "收藏列表更新成功", Toast.LENGTH_SHORT).show();
         }
     }
 }

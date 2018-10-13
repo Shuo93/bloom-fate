@@ -267,13 +267,15 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
         @Override
         protected void onPostExecute(Boolean success) {
             if (!success) {
+                getReference().showProgress(false);
                 Toast.makeText(getReference(), "注册失败", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (checkWeakReference()) {
                 getReference().showProgress(false);
-                Intent intent = new Intent(getReference(), SquareActivity.class);
-                getReference().startActivity(intent);
+                Toast.makeText(getReference(), "注册成功", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(getReference(), SquareActivity.class);
+//                getReference().startActivity(intent);
             }
         }
     }
@@ -380,9 +382,13 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
             }
             String args = object.toString();
             String result = FabricService.getConnection().query(func, args);
+            if (result.isEmpty()) {
+                return false;
+            }
             SharedPreferences preferences = getReference().getSharedPreferences(Constants.APP_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(Constants.USER_ID, result);
+            Log.i(TAG, "User ID: " + result);
             return editor.commit();
         }
 
