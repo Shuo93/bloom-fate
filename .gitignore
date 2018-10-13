@@ -10,3 +10,4 @@
 .externalNativeBuild
 /.idea
 /app/libs
+/app/src/main/assets
