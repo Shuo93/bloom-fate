@@ -40,13 +40,17 @@ public class MyPersonRecyclerViewAdapter extends RecyclerView.Adapter<MyPersonRe
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.inflate();
+        holder.likeTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onLikePersonClick(holder.mItem.getUserId());
+            }
+        });
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onListFragmentInteraction(holder.mItem.getUserId());
                 }
             }
         });
@@ -65,6 +69,7 @@ public class MyPersonRecyclerViewAdapter extends RecyclerView.Adapter<MyPersonRe
         final TextView ageTv;
         final TextView signatureTv;
         final ImageView photoImage;
+        final TextView likeTv;
         PersonBasic mItem;
 
         public ViewHolder(View view) {
@@ -76,6 +81,7 @@ public class MyPersonRecyclerViewAdapter extends RecyclerView.Adapter<MyPersonRe
             ageTv = view.findViewById(R.id.age_tv);
             signatureTv = view.findViewById(R.id.signature_tv);
             photoImage = view.findViewById(R.id.photo_image);
+            likeTv = view.findViewById(R.id.like_tv);
         }
 
         void inflate() {

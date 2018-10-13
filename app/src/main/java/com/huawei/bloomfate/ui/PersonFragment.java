@@ -20,11 +20,13 @@ import com.huawei.bloomfate.util.FabricService;
 import com.huawei.bloomfate.util.SafeAsyncTask;
 import com.huawei.bloomfate.util.SharedPreferencesHelper;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A fragment representing a list of Items.
@@ -32,9 +34,23 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class PersonFragment extends Fragment {
+public class PersonFragment extends Fragment implements Refreshable {
 
     private static final String TAG = "PersonFragment";
+
+    @Override
+    public void refresh() {
+        switch (type) {
+            case ALL:
+                queryPersonList();
+                break;
+            case LIKE:
+                queryLikeList();
+                break;
+            default:
+                Log.e(TAG, "unknown fragment type");
+        }
+    }
 
     enum Type {
         ALL,
@@ -99,16 +115,7 @@ public class PersonFragment extends Fragment {
             personList = new ArrayList<>();
             adapter = new MyPersonRecyclerViewAdapter(personList, mListener);
             recyclerView.setAdapter(adapter);
-            switch (type) {
-                case ALL:
-                    queryPersonList();
-                    break;
-                case LIKE:
-                    queryLikeList();
-                    break;
-                default:
-                    Log.e(TAG, "unknown fragment type");
-            }
+//            refresh();
         }
         Log.v(TAG, type.name());
         return root;
@@ -171,7 +178,9 @@ public class PersonFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(PersonBasic item);
+        void onListFragmentInteraction(String userId);
+
+        void onLikePersonClick(String userId);
     }
 
     private static final class RefreshTask extends SafeAsyncTask<PersonFragment, String, Void, String> {
@@ -192,12 +201,36 @@ public class PersonFragment extends Fragment {
             if (!checkWeakReference()) {
                 return;
             }
-            List<PersonBasic> items = FabricService.getConnection().getResults(response, PersonBasic.class);
             PersonFragment fragment = getReference();
+            if (response.equals(FabricService.ERROR)) {
+                Toast.makeText(fragment.getContext(), "后台发生错误", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (response.equals(FabricService.NO_DATA)) {
+                Toast.makeText(fragment.getContext(), "无记录", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            List<PersonBasic> items = new ArrayList<>();
+            if (getReference().type == Type.ALL) {
+                items = FabricService.getConnection().getResults(response, PersonBasic.class);
+            } else if (getReference().type == Type.LIKE) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        PersonBasic person = new PersonBasic();
+                        person.setUserId(jsonObject.getString("liker_id"));
+                        person.setName(jsonObject.getString("likername"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
             fragment.personList.clear();
             fragment.personList.addAll(items);
             fragment.adapter.notifyDataSetChanged();
-            Toast.makeText(getReference().getContext(), items.isEmpty() ? "无数据" : "收藏列表更新成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(fragment.getContext(), items.isEmpty() ? "数据解析错误" : "列表更新成功", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.huawei.bloomfate.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ public class RegisterActivityFragment extends Fragment {
     private EditText schoolView;
 
     private EditText companyView;
+    private EditText jobTv;
     private EditText salaryView;
 
     private Button photoView;
@@ -90,6 +92,7 @@ public class RegisterActivityFragment extends Fragment {
         schoolView = view.findViewById(R.id.school);
 
         companyView = view.findViewById(R.id.company);
+        jobTv = view.findViewById(R.id.job_tv);
         salaryView = view.findViewById(R.id.salary);
         photoView = view.findViewById(R.id.photo);
 
@@ -131,6 +134,7 @@ public class RegisterActivityFragment extends Fragment {
         basic.setPhotoFormat("");
         basic.setPhone(phoneView.getText().toString());
         basic.setEmail(wechatView.getText().toString());
+        basic.setIntroduction("");
 
         Edu edu = new Edu();
         edu.setDegree(education);
@@ -140,7 +144,7 @@ public class RegisterActivityFragment extends Fragment {
 
         Job job = new Job();
         job.setCompany(companyView.getText().toString());
-        job.setJob("");
+        job.setJob(jobTv.getText().toString());
         job.setSalary(salaryView.getText().toString());
         job.setEncryptedKey("");
         job.setSignature("");
@@ -188,8 +192,7 @@ public class RegisterActivityFragment extends Fragment {
             }
             if (success) {
                 Toast.makeText(context, "上传信息成功", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context, SquareActivity.class);
-                context.startActivity(intent);
+                ((Activity)context).finish();
                 return;
             }
             Toast.makeText(context, "上传信息失败", Toast.LENGTH_SHORT).show();

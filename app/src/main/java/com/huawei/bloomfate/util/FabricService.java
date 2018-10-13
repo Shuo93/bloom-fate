@@ -5,7 +5,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
@@ -152,15 +154,18 @@ public class FabricService {
     private ObjectMapper mapper;
     private FabricSdk sdk;
 
+    public static final String ERROR = "error";
+    public static final String NO_DATA = "no data";
+
     public boolean loadConfig(Context context) {
         try {
             InputStream is = context.getAssets().open("config.yaml");
             ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
             config = yamlMapper.readValue(is, FabricConfig.class);
-            key = getStringFromFile(context, "key.pem");
-            cert = getStringFromFile(context, "cert.pem");
-            peerCert = getStringFromFile(context, "peer.crt");
-            ordererCert = getStringFromFile(context, "orderer.crt");
+            key = getStringFromFile(context, "377b60c3-0681-7669-40d1-6384f1e742b3_sk");
+            cert = getStringFromFile(context, "User1@0bae78ff1065db10f1eaaa771fae77519f7f14aa.peer-0bae78ff1065db10f1eaaa771fae77519f7f14aa.default.svc.cluster.local-cert.pem");
+            peerCert = getStringFromFile(context, "tlsca.0bae78ff1065db10f1eaaa771fae77519f7f14aa-cert.pem");
+            ordererCert = getStringFromFile(context, "tlsca.77660fe18ca88dcd61c9b27e250f31b3c6d9821b-cert.pem");
             Log.i(TAG, "Channel ID: " + config.channelId);
             Log.i(TAG, "Chaincode ID: " + config.chaincodeId);
             Log.i(TAG, "Chaincode Version: " + config.chaincodeVersion);
@@ -218,7 +223,8 @@ public class FabricService {
 
     public <T> List<T> getResults(String response, Class<T> valueType) {
         try {
-            return mapper.readValue(response, new TypeReference<List<T>>() {});
+            CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, valueType);
+            return mapper.readValue(response, listType);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -235,11 +241,16 @@ public class FabricService {
                     .setPeersInfo(getPeerInfos())
                     .setTls(true)
                     .build();
-            return new String(sdk.query(request));
+            String result = new String(sdk.query(request));
+            Log.i(TAG, "Response: " + result);
+            if (result.equals(NO_DATA)) {
+                return NO_DATA;
+            }
+            return result;
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-        return "";
+        return ERROR;
     }
 
     public String query(String func) {

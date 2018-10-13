@@ -16,6 +16,5 @@ public class BioActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.frag_bio, new BioFragment()).commit();
         }
-
     }
 }

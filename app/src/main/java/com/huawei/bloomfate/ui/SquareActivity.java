@@ -22,11 +22,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.huawei.bloomfate.R;
 import com.huawei.bloomfate.model.PersonBasic;
 import com.huawei.bloomfate.ui.dummy.DummyContent;
+import com.huawei.bloomfate.util.FabricService;
+import com.huawei.bloomfate.util.SafeAsyncTask;
+import com.huawei.bloomfate.util.SharedPreferencesHelper;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -81,8 +86,9 @@ public class SquareActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ((Refreshable) mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem())).refresh();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
 
@@ -119,10 +125,46 @@ public class SquareActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(PersonBasic item) {
-        DateDialogFragment dialog = new DateDialogFragment();
-        dialog.setUserId(item.getUserId());
-        dialog.show(getSupportFragmentManager(), "date");
+    public void onListFragmentInteraction(String userId) {
+        Intent intent = new Intent(this, BioActivity.class);
+        startActivity(intent);
+//        DateDialogFragment dialog = new DateDialogFragment();
+//        dialog.setUserId(userId);
+//        dialog.show(getSupportFragmentManager(), "date");
+    }
+
+    @Override
+    public void onLikePersonClick(String userId) {
+        LikeTask task = new LikeTask(this);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("userId", SharedPreferencesHelper.getUserId(this));
+            jsonObject.put("likerId", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        task.execute("like", jsonObject.toString());
+    }
+
+    public static final class LikeTask extends SafeAsyncTask<SquareActivity, String, Void, Boolean> {
+
+        public LikeTask(SquareActivity reference) {
+            super(reference);
+        }
+
+        @Override
+        protected Boolean doInBackground(String... funcAndParams) {
+            String func = funcAndParams[0];
+            String args = funcAndParams[1];
+            return FabricService.getConnection().invoke(func, args);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (checkWeakReference()) {
+                Toast.makeText(getReference(), "收藏成功", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -189,7 +231,7 @@ public class SquareActivity extends AppCompatActivity implements
                         Log.i(TAG, "Fragment 0 created");
                         break;
                     case 1:
-                        fragmentArr.put(position, PersonFragment.newInstance(PersonFragment.Type.LIKE));
+                        fragmentArr.put(position, LikerFragment.newInstance(1));
                         Log.i(TAG, "Fragment 1 created");
                         break;
                     case 2:

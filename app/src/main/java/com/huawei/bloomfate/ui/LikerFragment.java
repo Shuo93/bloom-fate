@@ -6,15 +6,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.huawei.bloomfate.R;
-import com.huawei.bloomfate.model.Date;
 import com.huawei.bloomfate.ui.dummy.DummyContent;
 import com.huawei.bloomfate.ui.dummy.DummyContent.DummyItem;
 import com.huawei.bloomfate.util.FabricService;
@@ -34,37 +31,33 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class DateFragment extends Fragment implements Refreshable {
+public class LikerFragment extends Fragment implements Refreshable {
 
-    private static final String TAG = "DateFragment";
+    private static final String TAG = "LikerFragment";
 
-    enum Type {
-        SEND,
-        RECEIVE
-    }
-
-    private static final String ARG_TYPE = "browse-type";
-    private Type type;
+    // TODO: Customize parameter argument names
+    private static final String ARG_COLUMN_COUNT = "column-count";
+    // TODO: Customize parameters
+    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
-    private List<JSONObject> dateList;
-    private MyDateRecyclerViewAdapter adapter;
-
+    private List<LikerItem> likers;
+    private MyLikerRecyclerViewAdapter adapter;
     private String userId;
-
-//    private Switch switchStatus;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public DateFragment() {
+    public LikerFragment() {
     }
 
-    public static DateFragment newInstance(Type type) {
-        DateFragment fragment = new DateFragment();
+    // TODO: Customize parameter initialization
+    @SuppressWarnings("unused")
+    public static LikerFragment newInstance(int columnCount) {
+        LikerFragment fragment = new LikerFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_TYPE, type.name());
+        args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,50 +67,30 @@ public class DateFragment extends Fragment implements Refreshable {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            type = Type.valueOf(getArguments().getString(ARG_TYPE));
+            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_date_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_liker_list, container, false);
 
         // Set the adapter
-        View view = root.findViewById(R.id.date_list);
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            dateList = new ArrayList<>();
-            adapter = new MyDateRecyclerViewAdapter(dateList, mListener, type);
-            recyclerView.setAdapter(adapter);
-//            refresh();
-        }
-        Log.v(TAG, type.name());
-        return root;
-    }
+            if (mColumnCount <= 1) {
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            } else {
+                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            }
 
-    @Override
-    public void refresh() {
-        RefreshTask task = new RefreshTask(this);
-        JSONObject jsonObject = new JSONObject();
-        String userType;
-        if (type == Type.SEND) {
-            userType = "sender_id";
-        } else if (type == Type.RECEIVE) {
-            userType = "receiver_id";
-        } else {
-            userType = "";
+            likers = new ArrayList<>();
+            adapter = new MyLikerRecyclerViewAdapter(likers, mListener);
+            recyclerView.setAdapter(adapter);
         }
-        try {
-            jsonObject.put("userType", userType);
-            jsonObject.put("userId", userId);
-            jsonObject.put("status", "");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        task.execute("queryDate", jsonObject.toString());
+        return view;
     }
 
 
@@ -139,6 +112,11 @@ public class DateFragment extends Fragment implements Refreshable {
         mListener = null;
     }
 
+    @Override
+    public void refresh() {
+        queryLikeList();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -151,12 +129,58 @@ public class DateFragment extends Fragment implements Refreshable {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(JSONObject object);
+        void onListFragmentInteraction(String item);
     }
 
-    private static final class RefreshTask extends SafeAsyncTask<DateFragment, String, Void, String> {
+    static class LikerItem {
 
-        public RefreshTask(DateFragment reference) {
+        private String name;
+
+        private String time;
+
+        private String userId;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+    }
+
+
+    public void queryLikeList() {
+        RefreshTask task = new RefreshTask(this);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("userId", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        task.execute("queryLikeList", jsonObject.toString());
+    }
+
+
+    private static final class RefreshTask extends SafeAsyncTask<LikerFragment, String, Void, String> {
+
+        public RefreshTask(LikerFragment reference) {
             super(reference);
         }
 
@@ -172,7 +196,7 @@ public class DateFragment extends Fragment implements Refreshable {
             if (!checkWeakReference()) {
                 return;
             }
-            DateFragment fragment = getReference();
+            LikerFragment fragment = getReference();
             if (response.equals(FabricService.ERROR)) {
                 Toast.makeText(fragment.getContext(), "后台发生错误", Toast.LENGTH_SHORT).show();
                 return;
@@ -181,22 +205,22 @@ public class DateFragment extends Fragment implements Refreshable {
                 Toast.makeText(fragment.getContext(), "无记录", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            List<JSONObject> item = new ArrayList<>();
+            fragment.likers.clear();
             try {
-
                 JSONArray jsonArray = new JSONArray(response);
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    item.add(jsonArray.getJSONObject(i));
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    LikerItem person = new LikerItem();
+                    person.setUserId(jsonObject.getString("liker_id"));
+                    person.setName(jsonObject.getString("likername"));
+                    person.setTime(jsonObject.getString("created_time"));
+                    fragment.likers.add(person);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            fragment.dateList.clear();
-            fragment.dateList.addAll(item);
             fragment.adapter.notifyDataSetChanged();
-            Toast.makeText(getReference().getContext(), "约会列表更新成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(fragment.getContext(), fragment.likers.isEmpty() ? "数据解析错误" : "列表更新成功", Toast.LENGTH_SHORT).show();
         }
     }
 }

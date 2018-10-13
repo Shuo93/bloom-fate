@@ -160,6 +160,15 @@ public class PermissionFragment extends Fragment {
             if (!checkWeakReference()) {
                 return;
             }
+            PermissionFragment fragment = getReference();
+            if (response.equals(FabricService.ERROR)) {
+                Toast.makeText(fragment.getContext(), "后台发生错误", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (response.equals(FabricService.NO_DATA)) {
+                Toast.makeText(fragment.getContext(), "无记录", Toast.LENGTH_SHORT).show();
+                return;
+            }
             List<JSONObject> item = new ArrayList<>();
             try {
                 JSONArray jsonArray = new JSONArray(response);
@@ -169,7 +178,7 @@ public class PermissionFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            PermissionFragment fragment = getReference();
+
             fragment.permissionList.clear();
             fragment.permissionList.addAll(item);
             fragment.adapter.notifyDataSetChanged();

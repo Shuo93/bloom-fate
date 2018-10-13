@@ -274,7 +274,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
             if (checkWeakReference()) {
                 getReference().showProgress(false);
                 Toast.makeText(getReference(), "注册成功", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(getReference(), SquareActivity.class);
+//                Intent intent = new Intent(getReference(), RegisterActivity.class);
 //                getReference().startActivity(intent);
             }
         }
@@ -382,7 +382,7 @@ public class LoginActivity extends AppCompatActivity { //implements LoaderCallba
             }
             String args = object.toString();
             String result = FabricService.getConnection().query(func, args);
-            if (result.isEmpty()) {
+            if (result.equals(FabricService.ERROR)) {
                 return false;
             }
             SharedPreferences preferences = getReference().getSharedPreferences(Constants.APP_NAME, MODE_PRIVATE);
